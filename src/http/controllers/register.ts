@@ -14,7 +14,18 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
 
     const password_hash = await hash(password, 6)
 
-   
+    const userWithEmail = await prisma.user.findUnique({
+        where: {
+            email,
+        }
+    })
+
+    if (userWithEmail) {
+        return reply.status(409).send({
+            error: "User with this email already exists",
+        })
+    }
+
     await prisma.user.create({
         data: {
             name,
