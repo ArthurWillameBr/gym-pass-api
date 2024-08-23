@@ -9,18 +9,18 @@ let gymsRepository: InMemoryGymsRepository;
 let sut: CheckInUseCase;
 
 describe("Check-in Use Case", () => {
-  beforeEach(() => {
+  beforeEach( async () => {
     checkInsRepository = new InMemoryCheckInsRepository();
     gymsRepository = new InMemoryGymsRepository();
     sut = new CheckInUseCase(checkInsRepository, gymsRepository);
-
-    gymsRepository.items.push({
-      title: "Academia do Arthur",
+    
+    await gymsRepository.create({
       id: "gym-01",
+      title: "Academia do Arthur",
       description: "Academia 01",
-      latitude: new Decimal(-27.2092052),
-      longitude: new Decimal(-49.6401091),
       phone: "123456789",
+      latitude: -27.2092052,
+      longitude: -49.6401091,
     })
 
     // criando um mocking
