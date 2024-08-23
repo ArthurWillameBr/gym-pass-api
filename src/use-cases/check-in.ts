@@ -1,6 +1,6 @@
 
 import { CheckIn } from "@prisma/client";
-import { CheckInsRepository } from "@/repositories/chek-ins-repository";
+import { CheckInsRepository } from "@/repositories/check-ins-repository";
 
 interface CheckInUseCaseRequest {
   userId: string;
