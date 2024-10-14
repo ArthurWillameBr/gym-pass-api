@@ -1,6 +1,7 @@
 import requests from "supertest";
 import { app } from "@/app";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
 
 describe("Create (E2E)", () => {
   beforeAll(async () => {
@@ -11,29 +12,19 @@ describe("Create (E2E)", () => {
   });
 
   it("should be able to create gym", async () => {
-    await requests(app.server).post("/users").send({
-      name: "John Doe",
-      email: "johndoe@gmail.com",
-      password: "123456",
-    });
+    const { token } = await createAndAuthenticateUser(app);
 
-    const authResponse = await requests(app.server).post("/sessions").send({
-      email: "johndoe@gmail.com",
-      password: "123456",
-    });
-
-    const { token } = authResponse.body;
-
-    const createGymResponse = await requests(app.server)
-      .post("/gyms").send({
+    const response = await requests(app.server)
+      .post("/gyms")
+      .send({
         title: "Academia do Zé",
         description: "Academia top",
         phone: "123456789",
         latitude: 0,
         longitude: 0,
       })
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${token}`);
 
-    expect(createGymResponse.statusCode).toEqual(201);
+    expect(response.statusCode).toEqual(201);
   });
 });
