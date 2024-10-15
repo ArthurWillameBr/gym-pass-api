@@ -20,8 +20,8 @@ describe("Create (E2E)", () => {
         title: "Academia do Zé",
         description: "Academia top",
         phone: "123456789",
-        latitude: 0,
-        longitude: 0,
+        latitude: -27.2092052,
+        longitude: -49.6401091,
       })
       .set("Authorization", `Bearer ${token}`);
 
