@@ -1,56 +1,57 @@
-import requests from "supertest";
-import { app } from "@/app";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createAndAuthenticateUser } from "@/utils/test/create-and-authenticate-user";
+import request from 'supertest'
+import { app } from '@/app'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 
-describe("Nearby gyms (E2E)", () => {
+describe('Nearby Gyms (e2e)', () => {
   beforeAll(async () => {
-    await app.ready();
-  });
+    await app.ready()
+  })
+
   afterAll(async () => {
-    await app.close();
-  });
+    await app.close()
+  })
 
-  it("should be able to nearby a gym", async () => {
-    const { token } = await createAndAuthenticateUser(app);
+  it('should be able list nearby gyms', async () => {
+    const { token } = await createAndAuthenticateUser(app)
 
-    await requests(app.server)
-      .post("/gyms")
+    await request(app.server)
+      .post('/gyms')
+      .set('Authorization', `Bearer ${token}`)
       .send({
-        title: "Academia do Zé",
-        description: "Academia top",
-        phone: "123456789",
-        latitude: -27.2092052,
-        longitude: -49.6401091,
+        title: 'JavaScript Gym',
+        description: 'Some description.',
+        phone: '1199999999',
+        latitude: 40.748817,
+        longitude: -73.985428,
       })
-      .set("Authorization", `Bearer ${token}`);
 
-    await requests(app.server)
-      .post("/gyms")
+    await request(app.server)
+      .post('/gyms')
+      .set('Authorization', `Bearer ${token}`)
       .send({
-        title: "Academia do Chico",
-        description: "Academia top",
-        phone: "123456789",
-        latitude: -27.0610928,
-    longitude: -49.5229501
+        title: 'TypeScript Gym',
+        description: 'Some description.',
+        phone: '1199999999',
+        latitude: 40.757977,
+        longitude: -73.985530,
       })
-      .set("Authorization", `Bearer ${token}`);
 
-    const response = await requests(app.server)
-      .get("/gyms/nearby")
-      .send()
+    const response = await request(app.server)
+      .get('/gyms/nearby')
       .query({
-        latitude: -27.2092052,
-        longitude: -49.6401091,
+        latitude: 40.757977,
+        longitude: -73.985530,
       })
-      .set("Authorization", `Bearer ${token}`);
+      .set('Authorization', `Bearer ${token}`)
+      .send()
 
-    expect(response.statusCode).toEqual(200);
-    expect(response.body.gyms).toHaveLength(1);
+    expect(response.statusCode).toEqual(200)
+    expect(response.body.gyms).toHaveLength(1)
     expect(response.body.gyms).toEqual([
       expect.objectContaining({
-        title: "Academia do Zé",
+        title: 'JavaScript Gym',
       }),
-    ]);
-  });
-});
+    ])
+  })
+})
