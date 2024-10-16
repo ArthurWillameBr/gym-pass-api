@@ -5,34 +5,36 @@ export async function refresh(request: FastifyRequest, reply: FastifyReply) {
     onlyCookie: true,
   });
 
-    const token = await reply.jwtSign(
-      {},
-      {
-        sign: {
-          sub: request.user.sub,
-        },
-      }
-    );
+  const { role } = request.user;
 
-    const refreshToken = await reply.jwtSign(
-      {},
-      {
-        sign: {
-          sub: request.user.sub,
-          expiresIn: "7d",
-        },
-      }
-    );
+  const token = await reply.jwtSign(
+    { role },
+    {
+      sign: {
+        sub: request.user.sub,
+      },
+    }
+  );
 
-    return reply
-      .setCookie("refreshToken", refreshToken, {
-        path: "/",
-        secure: true,
-        sameSite: true,
-        httpOnly: true,
-      })
-      .status(200)
-      .send({
-        token,
-      });
-  } 
+  const refreshToken = await reply.jwtSign(
+    { role },
+    {
+      sign: {
+        sub: request.user.sub,
+        expiresIn: "7d",
+      },
+    }
+  );
+
+  return reply
+    .setCookie("refreshToken", refreshToken, {
+      path: "/",
+      secure: true,
+      sameSite: true,
+      httpOnly: true,
+    })
+    .status(200)
+    .send({
+      token,
+    });
+}
